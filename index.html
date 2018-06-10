@@ -4,10 +4,11 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+		<title>GraphQL & Django</title>
 
 		<link rel="stylesheet" href="css/reveal.css">
 		<link rel="stylesheet" href="css/theme/black.css">
+    <link rel="stylesheet" href="css/reveal_override.css">
 
 		<!-- Theme used for syntax highlighting of code -->
 		<link rel="stylesheet" href="lib/css/zenburn.css">
@@ -24,8 +25,506 @@
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
+				<section>
+          <h1>GraphQL & Django</h1>
+        </section>
+				<section>
+          <h2>About me</h2>
+          <pre><code class="hljs" data-trim>
+          {
+            "data": {
+              "user": {
+                "firstName": "Mehdi",
+                "lastName": "Raddadi",
+                "company": "Polyconseil",
+                "job": "Sofware engineer",
+                "technologies": {
+                  {"name": "Django"},
+                  {"name": "GraphQL"},
+                  {"name": "Vue"}
+                }
+              }
+            }
+          }
+          </code></pre>
+        </section>
+				<section>
+          <h2>Summary</h2>
+          <ul>
+          <li>
+            Introduction
+          </li>
+          <li>
+            GraphQL
+          </li>
+					<li>
+						Graphene
+					</li>
+        </section>
+        <section>
+          <section>
+						<h2>Evolution of the web</h2>
+          </section>
+          <section>
+						<h2>Web</h2>
+            <img src="images/server1.png" />
+          </section>
+          <section>
+						<h2>Web</h2>
+            <img src="images/server2.png" />
+          </section>
+          <section>
+            <h2>REST</h2>
+						<ul>
+							<li>Not a standard</li>
+              <li>Extensive routing</li>
+							<li>Too much/little data</li>
+						</ul>
+          </section>
+					<section>
+						<h2>What is GraphQL ?</h2>
+					</section>
+					<section>
+						<h2>GraphQL</h2>
+						<blockquote cite="http://searchservervirtualization.techtarget.com/definition/Our-Favorite-Technology-Quotations">
+              &ldquo;GraphQL is a <strong>query language for your API</strong>, and a server-side runtime for executing queries by using
+              a type system you define for your data. GraphQL <strong>isn't tied to any specific database or storage engine</strong> and
+							is instead backed by your existing code and data.&rdquo;
+						</blockquote>
+					</section>
+        </section>
+        <section>
+          <section>
+            <h2>A query language</h2>
+          </section>
+          <section>
+            <h2>Web SQL</h2>
+					  <pre><code class="hljs" data-trim>
+              query{
+                allTodos{
+                  id
+                  createdAt
+                  creator {
+                    id
+                  }
+                  description
+                  finishedAt
+                  todolist{
+                    id
+                  }
+                }
+              }
+          	</code></pre>
+          </section>
+          <section>
+            <h2>Objects</h2>
+					  <pre><code class="hljs" data-trim>
+                type Todo {
+                  id: ID
+                  description: String
+                  createdAt: Datetime
+                  finishedAt: Datetime
+                  creator: User
+                  todolist: TodoList
+                }
+          	</code></pre>
+					  <pre><code class="hljs" data-trim>
+                type TodoList {
+                  id: ID
+                  title: String
+                  createdAt: Datetime
+                  creator: User
+                  todos: [Todo]
+                }
+          	</code></pre>
+          </section>
+          <section>
+            <h2>What can I request from my API ?</h2>
+          </section>
+          <section>
+            <h2>Queries</h2>
+					  <pre><code class="hljs" data-trim>
+                query{
+                  user(id:2){
+                    id
+                    username
+                    firstName
+                    lastName
+                    email
+                  }
+                }
+            </code></pre>
+          </section>
+          <section>
+            <h2>Queries</h2>
+					  <pre><code class="hljs" data-trim>
+              {
+                "data": {
+                  "user": {
+                    "id": "2",
+                    "username": "eclar",
+                    "firstName": "Mehdi",
+                    "lastName": "Raddadi",
+                    "email": "mehdi.raddadi@polyconseil.fr"
+                  }
+                }
+              }
+            </code></pre>
+          </section>
+          <section>
+            <h2>Mutations</h2>
+					  <pre><code class="hljs" data-trim>
+              mutation{
+                createUser(newUser:{username:"eclar", password:"djangoCong2018", email:"mehdi.raddadi@polyconseil.fr", firstName:"Mehdi", lastName:"Raddadi"}){
+                  user{
+                    username
+                    id
+                    firstName
+                    lastName
+                  }
+                }
+              }
+            </code></pre>
+          </section>
+          <section>
+            <h2>Mutations</h2>
+					  <pre><code class="json" data-trim>
+              {
+                "data": {
+                  "createUser": {
+                    "user": {
+                      "username": "eclar",
+                      "id": "2",
+                      "firstName": "Mehdi",
+                      "lastName": "Raddadi"
+                    }
+                  }
+                }
+              }
+            </code></pre>
+          </section>
+          <section>
+            <h2>Subscriptions</h2>
+          </section>
+					<section>
+						<h2>Core principles</h2>
+						<ul>
+							<li>Hierachical</li>
+							<li>Product-centric</li>
+							<li>Strong-typing</li>
+							<li>Client-specific queries</li>
+							<li>Introspective</li>
+						</ul>
+					</section>
+					<section>
+						<h2>So why?</h2>
+						<table>
+							<thead>
+								<tr>
+									<td></td>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>What you want is what you get</td>
+								</tr>
+								<tr>
+									<td>API evolution</td>
+								</tr>
+								<tr>
+									<td>Self documentation</td>
+								</tr>
+								<tr>
+									<td>One endpoint</td>
+								</tr>
+							</tbody>
+						</table>
+					</section>
+        </section>
+        <section>
+					<section>
+          	<h2>Graphene</h2>
+					</section>
+					<section>
+						<h2>Let's create our models</h2>
+						<pre><code class="python" data-trim>
+              # app/models.py
+              class TodoList(models.Model):
+                  title = models.CharField(max_length=128, default='untitled')
+                  created_at = models.DateField(auto_now=True)
+                  creator = models.ForeignKey(User, null=True, related_name='todo_lists', on_delete=models.CASCADE)
+
+
+              class Todo(models.Model):
+                  description = models.CharField(max_length=256)
+                  created_at = models.DateField(auto_now=True)
+                  finished_at = models.DateField(null=True, blank=True)
+                  creator = models.ForeignKey(User, null=True, related_name='todos', on_delete=models.CASCADE)
+                  todolist = models.ForeignKey(TodoList, related_name='todos', on_delete=models.CASCADE)
+						</code></pre>
+					</section>
+					<section>
+						<h2>Create your schema in you application</h2>
+						<pre><code class="python" data-trim>
+              # app/schema.py
+              class TodoType(DjangoObjectType):
+                  class Meta:
+                      model = todo_models.Todo
+
+
+              class TodoListType(DjangoObjectType):
+                  class Meta:
+                      model = todo_models.TodoList            
+						</code></pre>
+					</section>
+					<section>
+						<h2>Create your first queries</h2>
+						<pre><code class="python" data-trim>
+              # app/schema.py
+              class Queries(object):
+                  todo = graphene.Field(
+                      TodoType,
+                      id=graphene.Int(),
+                  )
+                  all_todos = graphene.List(TodoType)
+
+                  def resolve_todo(self, info, **kwargs):
+                      todo_id = kwargs.get('id')
+
+                      if todo_id is not None:
+                          return todo_models.Todo.objects.get(pk=todo_id)
+                      return None
+
+                  def resolve_all_todos(self, info, **kwargs):
+                      return todo_models.Todo.objects.all()
+						</code></pre>
+					</section>
+					<section>
+						<h2>Create your first mutations</h2>
+						<pre><code class="python" data-trim>
+              # app/schema.py
+              class CreateTodoList(DjangoSerializerMutation):
+                  class Meta:
+                      serializer_class = todo_serializers.TodoListSerializer
+
+
+              class Mutations(graphene.ObjectType):
+                  create_todo_list = CreateTodoList.CreateField()
+                  update_todo_list = CreateTodoList.UpdateField()
+                  delete_todo_list = CreateTodoList.DeleteField()            
+						</code></pre>
+					</section>
+					<section>
+						<h2>Create your global schema</h2>
+						<pre><code class="python" data-trim>
+              # project/schema.py
+              import graphene
+
+              from graphene_django.debug import DjangoDebug
+
+              from graphql_demo.todos import schema as todo_schema
+              from graphql_demo.users import schema as users_schema
+
+              class RootQuery(todo_schema.Queries, users_schema.Queries, graphene.ObjectType):
+                  debug = graphene.Field(DjangoDebug, name='__debug')
+
+              class RootMutations(todo_schema.Mutations, users_schema.Mutations, graphene.ObjectType):
+                  pass
+
+              schema = graphene.Schema(query=RootQuery, mutation=RootMutations)              
+						</code></pre> GraphQL, c'est le SQL des API
+					</section>
+					<section>
+						<h2>Adapt your settings</h2>
+						<pre><code class="python" data-trim>
+            # settings.py
+            ...
+	          VENDORS_APPS = (
+	            ...
+	            'graphene_django',
+              ...
+            )
+            ...
+            # Graphene configuration
+            GRAPHENE = {
+              'SCHEMA': 'graphql_demo.schema.schema',  # Where your Graphene schema lives
+              'MIDDLEWARE': [
+	              'graphene_django.debug.DjangoDebugMiddleware',
+              ],
+            }
+						</code></pre>
+					</section>
+					<section>
+						<h2>Create the api url</h2>
+						<pre><code class="python" data-trim>
+              # urls.py
+              from graphene_django.views import GraphQLView
+
+              urlpatterns = [
+                  path('admin/', admin.site.urls),
+                  path('graphql/', csrf_exempt(GraphQLView.as_view(graphiql=True))),
+              ]
+						</code></pre>
+					</section>
+					<section>
+						<h2>Let's play !</h2>
+						<h3>GraphiQL</h3>
+					</section>
+					<section>
+						<h2>Front implementation example</h2>
+						<pre><code class="python" data-trim>
+              import gql from 'graphql-tag';
+              import { onLogin } from '../../vue-apollo';
+
+              const loginMutation = gql`
+              mutation($username:String!, $password:String!){
+                tokenAuth(username:$username, password:$password){
+                  token
+                }
+              }
+              `;
+
+              export default {
+                name: 'login',
+                data: () => ({
+                  drawer: null,
+                  username: '',
+                  password: '',
+                }),
+                methods: {
+                  login() {
+                    const { username } = this;
+                    const { password } = this;
+                    this.username = '';
+                    this.password = '';
+
+                    this.$apollo.mutate({
+                      mutation: loginMutation,
+                      variables: {
+                        username,
+                        password,
+                      },
+                    }).then((result) => {
+                      onLogin(this.$apolloProvider.defaultClient, result.data.tokenAuth.token);
+                    }).catch((error) => {
+                      console.log(error);
+                      this.username = username;
+                      this.password = password;
+                    });
+                  },
+                },
+              };
+						</code></pre>
+					</section>
+					<section>
+						<h2>Warnings</h2>
+            <ul>
+              <li>Authentication</li>
+              <li>Permissions</li>
+              <li>Malicious queries</li>
+            </ul>
+					</section>
+					<section>
+						<h2>So why?</h2>
+						<table>
+							<thead>
+								<tr>
+                  <td><b>Pros</b></td>
+                  <td><b>Cons</b></td>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>GraphQL with Django</td>
+									<td>Maturity</td>
+								</tr>
+								<tr>
+									<td>Out of the box</td>
+                  <td>Rewrite needed for complex behaviour</td>
+								</tr>
+							</tbody>
+						</table>
+					</section>
+        </section>
+				<section>
+					<h2>Thank you !</h2>
+					</br>
+          <p>GitHub example:</p>
+					<a href="https://github.com/eclar">https://github.com/eclar</a>
+          <p>Slides</p>
+					<a href="https://github.com/eclar">https://github.com/eclar</a>
+          <p>Twitter</p>
+					<a href="https://twitter.com/Polyconseiltech">@Polyconseiltech</a>
+				</section>
+        <section>
+          <section>
+            <h2>Annexes</h2>
+          </section>
+          <section>
+            <h2>Variables</h2>
+					  <pre><code class="js" data-trim>
+              // call
+	            mutation($token: String!) {
+	              verifyToken(token:$token) {
+	                payload
+	              }
+	            }
+	            // variable
+	            {
+	              "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJleHAiOjE1MjgyMDEwNjAsIm9yaWdfaWF0IjoxNTI4MjAwNzYwfQ.A2TFjDxaFj5MeyRMveuKjRIt_fgJD2XBzKjhzqB8vhc"
+	            }
+            </code></pre>
+          </section>
+          <section>
+            <h2>Variables</h2>
+					  <pre><code class="js" data-trim>
+              {
+                "data": {
+                  "verifyToken": {
+                    "payload": {
+                      "username": "root",
+                      "exp": 1528201060,
+                      "orig_iat": 1528200760
+                    }
+                  }
+                }
+               }
+            </code></pre>
+          </section>
+          <section>
+            <h2>Fragments</h2>
+					  <pre><code class="json" data-trim>
+              query{
+                allTodoLists{
+                  createdAt
+                  id
+                  title
+                  todos{
+                    ... todoSummary
+                  }
+                }
+                todo(id:3){
+                  ... todoSummary
+                }
+              }
+              fragment todoSummary on TodoType {
+                id
+                description
+              }
+            </code></pre>
+          </section>
+          <section>
+            <h2>Directives</h2>
+					  <pre><code class="json" data-trim>
+              query{
+                allTodo{
+                  id
+                  description: @include(if: $condition)
+                }
+              }
+            </code></pre>
+          </section>
+        </section>
 			</div>
 		</div>
 
@@ -37,6 +536,10 @@
 			// - https://github.com/hakimel/reveal.js#configuration
 			// - https://github.com/hakimel/reveal.js#dependencies
 			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
 				dependencies: [
 					{ src: 'plugin/markdown/marked.js' },
 					{ src: 'plugin/markdown/markdown.js' },
@@ -44,6 +547,9 @@
 					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
 				]
 			});
+      Reveal.configure({
+        slideNumber: true,
+      });
 		</script>
 	</body>
 </html>
