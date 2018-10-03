@@ -60,6 +60,9 @@
 					<li>
 						Graphene
 					</li>
+					<li>
+						Down the rabbit hole
+					</li>
         </section>
         <section>
           <section>
@@ -205,6 +208,41 @@
           </section>
           <section>
             <h2>Subscriptions</h2>
+					  <pre><code class="json" data-trim>
+              subscription{
+                userSubscription(
+                  action: UPDATE,
+                  operation: SUBSCRIBE,
+                  channelId: "GthKdsYVrK!WxRCdJQMPi",
+                  id: 5,
+                  data: [ID, USERNAME, FIRST_NAME, LAST_NAME, EMAIL, IS_SUPERUSER]
+                ){
+                  ok
+                  error
+                  stream
+                }
+              }
+            </code></pre>
+          </section>
+          <section>
+            <h2>Subscriptions</h2>
+					  <pre><code class="json" data-trim>
+              {
+                "stream": "users",
+                "payload": {
+                  "action": "update",
+                  "model": "auth.user",
+                  "data": {
+                    "id": 5,
+                    "username": "eclar",
+                    "first_name": "Mehdi",
+                    "last_name": "Raddadi",
+                    "email": "mehdi.raddadi@polyconseil.fr",
+                    "is_superuser": false
+                  }
+                }
+              }
+            </code></pre>
           </section>
 					<section>
 						<h2>Core principles</h2>
@@ -422,6 +460,95 @@
               <li>Authentication</li>
               <li>Permissions</li>
               <li>Malicious queries</li>
+            </ul>
+					</section>
+        </section>
+				<section>
+					<section>
+						<h2>Down the rabbit hole</h2>
+						<h2>A bit further</h2>
+					</section>
+					<section>
+						<h2>Security</h2>
+            <ul>
+              <li>Authentication</li>
+              <li>CORS</li>
+              <li>Middlewares and Context Managers</li>
+            </ul>
+					</section>
+					<section>
+						<h2>Authentication</h2>
+            <ul>
+              <li>Pick what fits your stack</li>
+              <li>You <b>don't</b> have to use GraphQL</li>
+            </ul>
+					</section>
+					<section>
+						<h3>Authentication - JWT</h3>
+            <ul>
+              <li>Use django-graphql-jwt</li>
+              <li>Plugs into Django easily</li>
+              <li>/!\ No server side revocation at the moment</li>
+            </ul>
+						<pre><code class="python" data-trim>
+              import grapql_jwt
+
+              class Mutations(graphene.ObjectType):
+                  # . . .
+                  # JWT authentication
+                  token_auth = graphql_jwt.ObtainJSONWebToken.Field()
+                  verify_token = graphql_jwt.Verify.Field()
+                  refresh_token = graphql_jwt.Refresh.Field()
+						</code></pre>
+					</section>
+					<section>
+						<h3>CORS</h3>
+            <ul>
+              <li>More secure application</li>
+              <li>Use django-cors-headers</li>
+            </ul>
+					</section>
+					<section>
+						<h3>Middlewares & Context Managers</h3>
+            <ul>
+              <li>Limit recursion</li>
+              <li>Study the query</li>
+              <li>Customize as much as <b>you</b> want</li>
+            </ul>
+					</section>
+					<section>
+						<h2>Testing</h2>
+            <ul>
+              <li>Good health for your app</li>
+              <li>Use frontend queries</li>
+              <li>Think about using Snapshot</li>
+            </ul>
+					</section>
+					<section>
+						<h2>Testing example</h2>
+						<pre><code class="python" data-trim>
+            from django.contrib.auth import get_user_model
+            from graphql_jwt.testcases import JSONWebTokenTestCase
+
+            class AllTodosQueryTests(JSONWebTokenTestCase):
+                def setUp(self):
+                    self.user = get_user_model().objects.create(username='test')
+                    self.client.authenticate(self.user)
+
+                def test_users(self):
+                    query = '''
+                    query {
+                      allTodos { id createdAt }
+                    }'''
+                    self.client.execute(query, variables={'username': self.user.username})
+						</code></pre>
+					</section>
+					<section>
+						<h2>Optimization - Caching & Batching</h2>
+            <ul>
+              <li>Beware of the magic</li>
+              <li>N + 1 requests</li>
+              <li>Dataloader</li>
             </ul>
 					</section>
 					<section>
